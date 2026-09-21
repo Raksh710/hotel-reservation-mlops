@@ -1,0 +1,274 @@
+/* ==========================================================================
+   Hotel Reservation Prediction – static/style.css
+   Works with the existing template markup; no HTML changes required.
+   Optional: add .is-cancel / .is-stay to .result for colored stamps.
+   ========================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=DM+Sans:opsz,wght@9..40,400..600&display=swap");
+
+/* ---------- Design tokens ---------- */
+:root {
+    color-scheme: light dark;
+
+    --page:        #e6eeec;
+    --card:        #fbfdfc;
+    --field:       #ffffff;
+    --ink:         #12302e;
+    --ink-soft:    #4b6663;
+    --line:        #c9d6d3;
+    --accent:      #1f6f68;
+    --ring:        rgb(31 111 104 / 0.35);
+    --btn-bg:      #12302e;
+    --btn-fg:      #ffffff;
+    --brass:       #9a6a1f;
+    --ok:          #1e7a4c;
+    --bad:         #b3372f;
+    --shadow:      rgb(18 48 46 / 0.35);
+
+    --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2312302E' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+
+    --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    --font-body:    "DM Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --page:     #0e1a19;
+        --card:     #152624;
+        --field:    #10201e;
+        --ink:      #e4efec;
+        --ink-soft: #9db8b4;
+        --line:     #2a413e;
+        --accent:   #5cc2b5;
+        --ring:     rgb(92 194 181 / 0.35);
+        --btn-bg:   #5cc2b5;
+        --btn-fg:   #0e1a19;
+        --brass:    #d9a653;
+        --ok:       #5fd39a;
+        --bad:      #ff8a80;
+        --shadow:   rgb(0 0 0 / 0.6);
+
+        --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23E4EFEC' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    }
+}
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: clamp(1rem, 4vw, 3rem) 1rem;
+    min-height: 100vh;
+    background: var(--page);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Card ---------- */
+.container {
+    width: min(720px, 100%);
+    margin: 0 auto;
+    padding: clamp(1.25rem, 4vw, 2.25rem);
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    box-shadow: 0 28px 48px -28px var(--shadow);
+}
+
+h2 {
+    margin: 0 0 1.5rem;
+    padding-bottom: 1.25rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 4vw, 2.15rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    /* perforated "booking slip" divider */
+    border-bottom: 2px dashed color-mix(in srgb, var(--brass) 55%, transparent);
+}
+
+/* ---------- Form layout ---------- */
+form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.1rem 1.25rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 0;
+}
+
+label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    transition: color 0.15s ease;
+}
+
+/* label lights up while its field is active */
+.form-group:focus-within label {
+    color: var(--accent);
+}
+
+/* ---------- Inputs & selects ---------- */
+input,
+select {
+    width: 100%;
+    padding: 0.7rem 0.85rem;
+    font: inherit;
+    color: var(--ink);
+    background-color: var(--field);
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    transition: border-color 0.15s ease, outline-color 0.15s ease, background-color 0.15s ease;
+}
+
+select {
+    appearance: none;
+    padding-right: 2.5rem;
+    background-image: var(--chevron);
+    background-repeat: no-repeat;
+    background-position: right 0.95rem center;
+    cursor: pointer;
+}
+
+input:hover,
+select:hover {
+    border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
+}
+
+input:focus,
+select:focus {
+    outline: 3px solid var(--ring);
+    outline-offset: 0;
+    border-color: var(--accent);
+}
+
+/* live validation feedback (only after the user interacts) */
+input:user-valid {
+    border-color: color-mix(in srgb, var(--ok) 65%, var(--line));
+}
+
+input:user-invalid {
+    border-color: var(--bad);
+}
+
+input:user-invalid:focus {
+    outline-color: color-mix(in srgb, var(--bad) 35%, transparent);
+}
+
+/* ---------- Submit button ---------- */
+button[type="submit"] {
+    grid-column: 1 / -1;
+    position: relative;
+    overflow: hidden;
+    margin-top: 0.4rem;
+    padding: 0.9rem 1.2rem;
+    font: inherit;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+    color: var(--btn-fg);
+    background: var(--btn-bg);
+    border: 0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+/* light sweep across the button on hover */
+button[type="submit"]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.25) 50%, transparent 65%);
+    transform: translateX(-120%);
+    transition: transform 0.6s ease;
+    pointer-events: none;
+}
+
+button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 20px -12px var(--btn-bg);
+}
+
+button[type="submit"]:hover::after {
+    transform: translateX(120%);
+}
+
+button[type="submit"]:active {
+    transform: translateY(0) scale(0.99);
+    box-shadow: none;
+}
+
+button[type="submit"]:focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 3px;
+}
+
+/* ---------- Prediction result: a "stamp" that lands on the slip ---------- */
+.result {
+    --stamp: var(--brass);
+    margin: 1.75rem 0.5rem 0.5rem;
+    padding: 1rem 1.25rem;
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--stamp);
+    border: 2.5px solid var(--stamp);
+    border-radius: 12px;
+    outline: 1px solid var(--stamp);
+    outline-offset: 4px;
+    transform: rotate(-1.2deg);
+    animation: stamp 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+.result p {
+    margin: 0;
+}
+
+/* optional modifiers – see the template snippet in the notes */
+.result.is-cancel { --stamp: var(--bad); }
+.result.is-stay   { --stamp: var(--ok); }
+
+@keyframes stamp {
+    from {
+        opacity: 0;
+        transform: rotate(-6deg) scale(1.35);
+    }
+    to {
+        opacity: 1;
+        transform: rotate(-1.2deg) scale(1);
+    }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 620px) {
+    form {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    button[type="submit"]:hover {
+        transform: none;
+    }
+}
