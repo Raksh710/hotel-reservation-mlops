@@ -1,4 +1,5 @@
-# Use the Jenkins image as the base image
+# Use the Jenkins image as the base image.
+# This will only be done to containerize our jenkins, whereas the one in the project's root directory is the one which containerize the entire project
 FROM jenkins/jenkins:lts
 
 # Switch to root user to install dependencies
