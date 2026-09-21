@@ -1,8 +1,8 @@
-# Use a lightweight Python image
-# This will containerize the entire project. the one in custo jenkins is only for containerizing the jenkins setup
+# Containerizes the entire project (the one in custom_jenkins only builds the Jenkins image)
+# Pin the Python version so pandas/numpy/scikit-learn install from prebuilt wheels
 FROM python:3.12-slim
 
-# Set environment variables to prevent Python from writing .pyc files & Ensure Python output is not buffered
+# Prevent .pyc files and keep Python output unbuffered
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
@@ -12,7 +12,6 @@ WORKDIR /app
 # Install system dependencies required by LightGBM
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libgomp1 \
-    && apt-get upgrade -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -22,8 +21,11 @@ COPY . .
 # Install the package in editable mode
 RUN pip install --no-cache-dir -e .
 
-# Train the model before running the application
-RUN python pipeline/training_pipeline.py
+# Train the model before running the application.
+# The GCP key is mounted only for this step and is never stored in an image layer.
+RUN --mount=type=secret,id=gcp_key,target=/run/secrets/gcp_key.json \
+    GOOGLE_APPLICATION_CREDENTIALS=/run/secrets/gcp_key.json \
+    python pipeline/training_pipeline.py
 
 # Expose the port that Flask will run on
 EXPOSE 5000
