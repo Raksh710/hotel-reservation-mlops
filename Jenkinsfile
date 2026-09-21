@@ -2,8 +2,11 @@ pipeline {
     agent any
 
     environment {
-        VENV_DIR    = 'venv'
-        GCP_PROJECT = 'stellar-river-411501'
+        VENV_DIR     = 'venv'
+        GCP_PROJECT  = 'stellar-river-411501'
+        GCP_REGION   = 'us-central1'
+        SERVICE_NAME = 'hotel-reservation-project'
+        IMAGE        = "gcr.io/stellar-river-411501/hotel-reservation-project:latest"
     }
 
     stages {
@@ -47,9 +50,37 @@ pipeline {
 
                         docker build \
                           --secret id=gcp_key,src=${GOOGLE_APPLICATION_CREDENTIALS} \
-                          -t gcr.io/${GCP_PROJECT}/hotel-reservation-project:latest .
+                          -t ${IMAGE} .
 
-                        docker push gcr.io/${GCP_PROJECT}/hotel-reservation-project:latest
+                        docker push ${IMAGE}
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Google Cloud Run') {
+            steps {
+                withCredentials([file(credentialsId: 'gcp-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                    script {
+                        echo 'Deploying to Google Cloud Run'
+                        sh '''
+                        gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS}
+                        gcloud config set project ${GCP_PROJECT}
+
+                        gcloud run deploy ${SERVICE_NAME} \
+                          --image ${IMAGE} \
+                          --platform managed \
+                          --region ${GCP_REGION} \
+                          --port 5000 \
+                          --memory 1Gi \
+                          --allow-unauthenticated \
+                          --quiet
+
+                        echo "Service URL:"
+                        gcloud run services describe ${SERVICE_NAME} \
+                          --region ${GCP_REGION} \
+                          --format 'value(status.url)'
                         '''
                     }
                 }
